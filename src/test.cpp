@@ -6,6 +6,7 @@
 
 int main()
 {
+	std::cout<<atan2(1,1)<<std::endl;
 	// Create a Kalman Filter instance
 	FusionEKF fusionEKF;
 
@@ -27,7 +28,7 @@ int main()
 	string line;
 	// set i to get only first 3 measurments
 	int i = 0;
-	while(getline(in_file, line) && (i<=10)){
+	while(getline(in_file, line) && (i<=490)){
 
 		MeasurementPackage meas_package;
 

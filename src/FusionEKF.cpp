@@ -42,9 +42,9 @@ FusionEKF::FusionEKF() {
 			0, 1, 0, 0;
 	ekf_.P_ = MatrixXd(4, 4);
 	ekf_.P_ << 1, 0, 0, 0,
-			  0, 1, 0, 0,
-			  0, 0, 1000, 0,
-			  0, 0, 0, 1000;
+			0, 1, 0, 0,
+			0, 0, 1000, 0,
+			0, 0, 0, 1000;
 	ekf_.F_ = MatrixXd::Identity(4, 4);
 	ekf_.Q_ = MatrixXd(4, 4);
 }
@@ -109,6 +109,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 	 * Use noise_ax = 9 and noise_ay = 9 for your Q matrix.
 	 */
 	float dt = (measurement_pack.timestamp_ - previous_timestamp_) / 1000000.0;	//dt - expressed in seconds
+	previous_timestamp_ = measurement_pack.timestamp_;
 	ekf_.F_(0, 2) = dt;
 	ekf_.F_(1, 3) = dt;
 
@@ -149,6 +150,6 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 	}
 
 	// print the output
-	cout << "x_ = " << ekf_.x_ << endl;
-	cout << "P_ = " << ekf_.P_ << endl;
+	//cout << "x_ = " << ekf_.x_ << endl;
+	//cout << "P_ = " << ekf_.P_ << endl;
 }

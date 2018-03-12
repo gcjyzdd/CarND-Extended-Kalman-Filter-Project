@@ -1,5 +1,6 @@
 #include "kalman_filter.h"
 #include <cmath>
+#include <iostream>
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -12,29 +13,29 @@ KalmanFilter::KalmanFilter() {}
 KalmanFilter::~KalmanFilter() {}
 
 void KalmanFilter::Init(VectorXd &x_in, MatrixXd &P_in, MatrixXd &F_in,
-                        MatrixXd &H_in, MatrixXd &R_in, MatrixXd &Q_in) {
-  x_ = x_in;
-  P_ = P_in;
-  F_ = F_in;
-  H_ = H_in;
-  R_ = R_in;
-  Q_ = Q_in;
+		MatrixXd &H_in, MatrixXd &R_in, MatrixXd &Q_in) {
+	x_ = x_in;
+	P_ = P_in;
+	F_ = F_in;
+	H_ = H_in;
+	R_ = R_in;
+	Q_ = Q_in;
 }
 
 void KalmanFilter::Predict() {
-  /**
+	/**
   TODO:
-    * predict the state
-  */
+	 * predict the state
+	 */
 	x_ = F_ * x_;
 	P_ = F_ * P_ * F_.transpose() + Q_;
 }
 
 void KalmanFilter::Update(const VectorXd &z) {
-  /**
+	/**
   TODO:
-    * update the state by using Kalman Filter equations
-  */
+	 * update the state by using Kalman Filter equations
+	 */
 	VectorXd r = z - H_ * x_;
 	MatrixXd S = H_ * P_ * H_.transpose() + R_;
 	MatrixXd K = P_ * H_.transpose() * S.inverse();
@@ -44,16 +45,28 @@ void KalmanFilter::Update(const VectorXd &z) {
 }
 
 void KalmanFilter::UpdateEKF(const VectorXd &z) {
-  /**
+	/**
   TODO:
-    * update the state by using Extended Kalman Filter equations
-  */
+	 * update the state by using Extended Kalman Filter equations
+	 */
 	VectorXd x(3);
 
 	x << std::sqrt(x_(0)*x_(0) + x_(1)*x_(1)),
-			atan2(x_(1), x_(0)),
+			std::atan2(x_(1), x_(0)),
 			(x_(0)*x_(2)+x_(1)*x_(3))/std::sqrt(x_(0)*x_(0) + x_(1)*x_(1));
+
 	VectorXd r = z - x;
+
+	// Make sure the error is within (-pi, pi]
+	while (r(1)> PI)
+	{
+		r(1) -= 2*PI;
+	}
+	while (r(1)< -PI)
+	{
+		r(1)+= 2*PI;
+	}
+	//std::cout<<"delta theta = "<< r(2)<<" z = "<<z(2)<<" x = "<<x(2)<<std::endl;
 	MatrixXd S = H_ * P_ * H_.transpose() + R_;
 	MatrixXd K = P_ * H_.transpose() * S.inverse();
 	x_ = x_ + K * r;

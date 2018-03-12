@@ -82,6 +82,14 @@ int main()
           		float ro;
       	  		float theta;
       	  		float ro_dot;
+      	  		while (theta > PI)
+      	  		{
+      	  			theta -= 2*PI;
+      	  		}
+      	  		while (theta < -PI)
+      	  		{
+      	  			theta += 2*PI;
+      	  		}
           		iss >> ro;
           		iss >> theta;
           		iss >> ro_dot;
